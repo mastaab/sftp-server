@@ -68,8 +68,11 @@ spec:
               mountPath: /home/ {{- .Values.sftpConfig.username -}} /.ssh/keys/
             {{- end }}
             {{- if .Values.sftpConfig.hostKeys }}
-            {{- range .Values.sftpConfig.hostKeys.keys }}
             - name: ssh-host-keys
+            {{- if .Values.sftpConfig..hostKeys.secret }}
+              mountPath: "/etc/ssh/"
+            {{- end }}
+            {{- range .Values.sftpConfig.hostKeys.keys }}
               mountPath: /etc/ssh/{{ . }}
               subPath: {{ . }}
             {{- end }}
