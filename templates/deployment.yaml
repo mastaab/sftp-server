@@ -124,6 +124,11 @@ spec:
         secret:
           secretName: {{ .Values.sftpConfig.hostKeys.secret }}
           defaultMode: 384
+          items:
+            - key: ssh_host_rsa_key
+              path: ssh_host_rsa_key
+            - key: ssh_host_ed25519_key
+              path: ssh_host_ed25519_key
       {{- end }}
       {{- if .Values.persistentVolume.enabled }}
       - name: data
