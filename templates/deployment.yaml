@@ -70,7 +70,7 @@ spec:
             {{- if .Values.sftpConfig.hostKeys }}
             - name: ssh-host-keys
             {{- if .Values.sftpConfig.hostKeys.secret }}
-              mountPath: "/etc/ssh/"
+              mountPath: "/etc/ssh-host-keys/"
             {{- end }}
             {{- range .Values.sftpConfig.hostKeys.keys }}
               mountPath: /etc/ssh/{{ . }}
@@ -85,6 +85,13 @@ spec:
               port: 22
           resources:
             {{- toYaml .Values.resources.sftp | nindent 12 }}
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - cp /etc/ssh-host-keys/* /etc/ssh/
         {{- if .Values.debug.enabled }}
         - name: debug
           image: {{ .Values.debug.image.repository }}:{{ .Values.debug.image.tag }}
@@ -124,11 +131,6 @@ spec:
         secret:
           secretName: {{ .Values.sftpConfig.hostKeys.secret }}
           defaultMode: 384
-          items:
-            - key: ssh_host_rsa_key
-              path: ssh_host_rsa_key
-            - key: ssh_host_ed25519_key
-              path: ssh_host_ed25519_key
       {{- end }}
       {{- if .Values.persistentVolume.enabled }}
       - name: data
