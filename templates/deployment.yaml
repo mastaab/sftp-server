@@ -85,6 +85,7 @@ spec:
               port: 22
           resources:
             {{- toYaml .Values.resources.sftp | nindent 12 }}
+          {{- if .Values.sftpConfig.hostKeys.secret }}
           lifecycle:
             postStart:
               exec:
@@ -92,6 +93,7 @@ spec:
                   - /bin/sh
                   - -c
                   - cp /etc/ssh-host-keys/* /etc/ssh/
+          {{- end }}
         {{- if .Values.debug.enabled }}
         - name: debug
           image: {{ .Values.debug.image.repository }}:{{ .Values.debug.image.tag }}
